@@ -13,7 +13,7 @@ class HotelPaymentWizard(models.TransientModel):
     
     payment_date = fields.Date('Payment Date', required=True, default=fields.Date.today)
     amount = fields.Monetary('Amount', currency_field='currency_id', required=True)
-    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
+    currency_id = fields.Many2one(related='booking_id.currency_id', readonly=True)
     
     payment_method = fields.Selection([
         ('cash', 'Cash'),
