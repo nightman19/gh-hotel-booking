@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Booking Sequence -->
+    <record id="sequence_hotel_booking" model="ir.sequence">
+        <field name="name">Hotel Booking Sequence</field>
+        <field name="code">hotel.booking</field>
+        <field name="prefix">BK</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Payment Sequence -->
+    <record id="sequence_hotel_payment" model="ir.sequence">
+        <field name="name">Hotel Payment Sequence</field>
+        <field name="code">hotel.payment</field>
+        <field name="prefix">PAY</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

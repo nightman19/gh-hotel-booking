@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Booking List View -->
+    <record id="view_hotel_booking_list" model="ir.ui.view">
+        <field name="name">hotel.booking.list</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <list string="Bookings" 
+                decoration-info="state=='draft'"
+                decoration-success="state=='confirmed'"
+                decoration-warning="state=='checkedin'"
+                decoration-muted="state in ['checkedout','cancelled']">
+                <field name="name"/>
+                <field name="guest_name"/>
+                <field name="guest_phone"/>
+                <field name="room_id"/>
+                <field name="checkin_date"/>
+                <field name="checkout_date"/>
+                <field name="number_of_nights"/>
+                <field name="total_amount" widget="monetary"/>
+                <field name="payment_status" widget="badge"
+                    decoration-success="payment_status=='paid'"
+                    decoration-warning="payment_status=='partial'"
+                    decoration-danger="payment_status=='unpaid'"/>
+                <field name="state" widget="badge"
+                    decoration-info="state=='draft'"
+                    decoration-success="state=='confirmed'"
+                    decoration-warning="state=='checkedin'"
+                    decoration-muted="state in ['checkedout','cancelled']"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Booking Form View -->
+    <record id="view_hotel_booking_form" model="ir.ui.view">
+        <field name="name">hotel.booking.form</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <form string="Booking">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" 
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_checkin" string="Check In" type="object" 
+                            class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <button name="action_checkout" string="Check Out" type="object" 
+                            class="oe_highlight" invisible="state != 'checkedin'"/>
+                    <button name="action_register_payment" string="Register Payment" 
+                            type="object" class="btn-success" 
+                            invisible="state in ['draft','cancelled']"/>
+                    <button name="action_cancel" string="Cancel" type="object" 
+                            invisible="state in ['checkedout','cancelled']"/>
+                    <button name="action_set_to_draft" string="Set to Draft" type="object" 
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,checkedin,checkedout"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_confirm" type="object" class="oe_stat_button" icon="fa-check-circle"
+                                invisible="state != 'draft'">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Confirm</span>
+                            </div>
+                        </button>
+                        <button name="action_view_payments" type="object" 
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="payment_count" widget="statinfo" string="Payments"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Guest Information">
+                            <field name="guest_name"/>
+                            <field name="guest_phone"/>
+                            <field name="guest_email"/>
+                            <field name="guest_id_number"/>
+                            <field name="number_of_guests"/>
+                        </group>
+                        <group string="Booking Details">
+                            <field name="room_id"/>
+                            <field name="room_type"/>
+                            <field name="checkin_date"/>
+                            <field name="checkout_date"/>
+                            <field name="number_of_nights"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Pricing">
+                            <field name="rate_per_night" widget="monetary"/>
+                            <field name="total_amount" widget="monetary"/>
+                            <field name="amount_paid" widget="monetary"/>
+                            <field name="balance" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="payment_status" widget="badge"/>
+                        </group>
+                        <group string="Additional Information">
+                            <field name="special_requests" placeholder="Dietary requirements, early check-in, etc."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Internal Notes">
+                            <field name="notes" placeholder="Internal notes..."/>
+                        </page>
+                        <page string="Payments">
+                            <field name="payment_ids" readonly="1">
+                                <list create="false" delete="false" edit="false">
+                                    <field name="name"/>
+                                    <field name="payment_date"/>
+                                    <field name="amount" widget="monetary" sum="Total Paid"/>
+                                    <field name="payment_method"/>
+                                    <field name="reference_number"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Booking Calendar View -->
+    <record id="view_hotel_booking_calendar" model="ir.ui.view">
+        <field name="name">hotel.booking.calendar</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Bookings Calendar" 
+                      date_start="checkin_date" 
+                      date_stop="checkout_date"
+                      color="room_id"
+                      mode="month"
+                      quick_create="0">
+                <field name="guest_name"/>
+                <field name="room_id"/>
+                <field name="state"/>
+                <field name="total_amount"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Booking Kanban View -->
+    <record id="view_hotel_booking_kanban" model="ir.ui.view">
+        <field name="name">hotel.booking.kanban</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="name"/>
+                <field name="guest_name"/>
+                <field name="room_id"/>
+                <field name="checkin_date"/>
+                <field name="checkout_date"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="card" class="oe_kanban_color_{color}">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <strong><field name="name"/></strong>
+                                <div><field name="guest_name"/></div>
+                                <div><field name="room_id"/></div>
+                                <div><field name="checkin_date"/> to <field name="checkout_date"/></div>
+                                <div><strong>GHS <field name="total_amount"/></strong></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Booking Search View -->
+    <!-- <record id="view_hotel_booking_search" model="ir.ui.view">
+        <field name="name">hotel.booking.search</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record> -->
+    
+    <!-- Booking Search View -->
+    <record id="view_hotel_booking_search" model="ir.ui.view">
+        <field name="name">hotel.booking.search</field>
+        <field name="model">hotel.booking</field>
+        <field name="arch" type="xml">
+            <search string="Search Bookings">
+                <field name="name"/>
+                <field name="guest_name"/>
+                <field name="guest_phone"/>
+                <field name="room_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Confirmed" name="confirmed" domain="[('state','=','confirmed')]"/>
+                <filter string="Checked In" name="checkedin" domain="[('state','=','checkedin')]"/>
+                <filter string="Checked Out" name="checkedout" domain="[('state','=','checkedout')]"/>
+                <separator/>
+                <filter string="Unpaid" name="unpaid" domain="[('payment_status','=','unpaid')]"/>
+                <filter string="Partially Paid" name="partial" domain="[('payment_status','=','partial')]"/>
+                <filter string="Fully Paid" name="paid" domain="[('payment_status','=','paid')]"/>
+                <separator/>
+                <filter string="Room" name="group_room" context="{'group_by':'room_id'}"/>
+                <filter string="Status" name="group_state" context="{'group_by':'state'}"/>
+                <filter string="Check-in Date" name="group_checkin" context="{'group_by':'checkin_date'}"/>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- Booking Action -->
+    <record id="action_hotel_booking" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">hotel.booking</field>
+        <field name="view_mode">list,kanban,form,calendar</field>
+        <field name="context">{'search_default_confirmed': 1, 'search_default_checkedin': 1}</field>
+    </record>
+
+    <!-- Today's Check-ins Action -->
+    <record id="action_today_checkins" model="ir.actions.act_window">
+        <field name="name">Today's Check-ins</field>
+        <field name="res_model">hotel.booking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_confirmed': 1}</field>
+    </record>
+
+    <!-- Today's Check-outs Action -->
+    <record id="action_today_checkouts" model="ir.actions.act_window">
+        <field name="name">Today's Check-outs</field>
+        <field name="res_model">hotel.booking</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_checkedin': 1}</field>
+    </record>
+</odoo>

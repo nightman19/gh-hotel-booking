@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bulk Create Rooms Wizard Form -->
+    <record id="view_room_bulk_create_wizard_form" model="ir.ui.view">
+        <field name="name">hotel.room.bulk.wizard.form</field>
+        <field name="model">hotel.room.bulk.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Create Rooms">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="room_type"/>
+                            <field name="quantity"/>
+                            <field name="starting_number"/>
+                            <field name="floor_number"/>
+                        </group>
+                        <group>
+                            <field name="prefix" placeholder="e.g., A, B, C"/>
+                            <field name="capacity"/>
+                            <field name="rate_per_night" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="amenities" placeholder="e.g., AC, TV, WiFi, Mini Bar"/>
+                    </group>
+                    <notebook>
+                        <page string="Preview">
+                            <div class="alert alert-info" role="alert">
+                                <p><strong>This will create the following rooms:</strong></p>
+                                <ul>
+                                    <li><strong>Room Type:</strong> <field name="room_type" readonly="1" nolabel="1"/></li>
+                                    <li><strong>Number of Rooms:</strong> <field name="quantity" readonly="1" nolabel="1"/> rooms</li>
+                                    <li><strong>Starting from Room:</strong> <field name="prefix" readonly="1" nolabel="1"/><field name="starting_number" readonly="1" nolabel="1"/></li>
+                                    <li><strong>Floor:</strong> <field name="floor_number" readonly="1" nolabel="1"/></li>
+                                    <li><strong>Max Guests:</strong> <field name="capacity" readonly="1" nolabel="1"/></li>
+                                    <li><strong>Rate per Night:</strong> <field name="rate_per_night" readonly="1" nolabel="1" widget="monetary"/></li>
+                                </ul>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Create Rooms" name="action_create_rooms" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_room_bulk_create_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Create Rooms</field>
+        <field name="res_model">hotel.room.bulk.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

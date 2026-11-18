@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Room List View -->
+    <record id="view_hotel_room_list" model="ir.ui.view">
+        <field name="name">hotel.room.list</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <list string="Rooms" decoration-muted="status=='maintenance'">
+                <header>
+                    <button name="%(action_room_bulk_create_wizard)d" 
+                            type="action" 
+                            string="Bulk Create Rooms" 
+                            class="btn-primary"/>
+                </header>
+                <field name="room_number"/>
+                <field name="name"/>
+                <field name="room_type"/>
+                <field name="capacity"/>
+                <field name="rate_per_night" widget="monetary"/>
+                <field name="status" widget="badge" 
+                       decoration-success="status=='available'"
+                       decoration-warning="status=='cleaning'"
+                       decoration-danger="status=='occupied'"
+                       decoration-muted="status=='maintenance'"/>
+                <field name="booking_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Room Form View -->
+    <record id="view_hotel_room_form" model="ir.ui.view">
+        <field name="name">hotel.room.form</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <form string="Room">
+                <header>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="room_number" placeholder="e.g., 101"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="room_type"/>
+                            <field name="capacity"/>
+                            <field name="floor"/>
+                        </group>
+                        <group>
+                            <field name="rate_per_night" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="booking_count"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details">
+                            <group>
+                                <field name="amenities" placeholder="e.g., AC, TV, WiFi, Mini Bar"/>
+                                <field name="notes" placeholder="Internal notes about this room"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Room Kanban View -->
+    <record id="view_hotel_room_kanban" model="ir.ui.view">
+        <field name="name">hotel.room.kanban</field>
+        <field name="model">hotel.room</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="room_number"/>
+                <field name="name"/>
+                <field name="room_type"/>
+                <field name="rate_per_night"/>
+                <field name="status"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_content">
+                                <h3><field name="room_number"/></h3>
+                                <p><field name="name"/></p>
+                                <p><field name="room_type"/></p>
+                                <p><strong>GHS <field name="rate_per_night"/>/night</strong></p>
+                                <p><field name="status" widget="badge"/></p>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    <!-- Room Action -->
+    <record id="action_hotel_room" model="ir.actions.act_window">
+        <field name="name">Rooms</field>
+        <field name="res_model">hotel.room</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>
