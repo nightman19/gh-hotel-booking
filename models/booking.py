@@ -32,7 +32,7 @@ class HotelBooking(models.Model):
     total_amount = fields.Monetary('Total Amount', compute='_compute_total', store=True, currency_field='currency_id')
     amount_paid = fields.Monetary('Amount Paid', currency_field='currency_id', compute='_compute_amount_paid', store=True, tracking=True)
     balance = fields.Monetary('Balance', compute='_compute_balance', store=True, currency_field='currency_id')
-    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.company.currency_id)
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.ref('base.GHS', raise_if_not_found=False) or self.env.company.currency_id)
 
     # Payment tracking
     payment_ids = fields.One2many('hotel.payment', 'booking_id', string='Payments')
